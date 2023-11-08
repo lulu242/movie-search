@@ -1,0 +1,24 @@
+{
+  "name": "movie",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "dev": "parcel ./index.html",
+    "build": "parcel build ./index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lulu242/movie-search.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lulu242/movie-search/issues"
+  },
+  "homepage": "https://github.com/lulu242/movie-search#readme",
+  "devDependencies": {
+    "parcel": "^2.10.2"
+  }
+}
