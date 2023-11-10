@@ -12,7 +12,7 @@ const store = new Store({
 
 export default store
 export const searchMovies = async page => {
-  store.state.loadging = true
+  store.state.loading = true
   store.state.page = page
   if(page === 1) {
     store.state.movie = []
