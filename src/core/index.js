@@ -56,9 +56,9 @@ export class Store {
   constructor(state) {
     this.state = {}
     this.observers = {}
-    for(const key of state) {
+    for(const key in state) {
       // 각 상태에 대한 변경 감시(Setter) 설정
-      Object.defineProperties(this.state, key, {
+      Object.defineProperty(this.state, key, {
         get: () => state[key],
         set: val => {
           state[key] = val // 상태 변경
