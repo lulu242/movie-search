@@ -22,7 +22,7 @@ export const searchMovies = async page => {
   try {
     const res = await fetch(`https://omdbapi.com?apikey=78177d20&s=${store.state.searchText}&page=${page}`)
     // const res = await fetch('/api/movie', {
-    //   method: 'POST',
+    //   method: 'POST', //body에 데이터 담을려면 post로
     //   body: JSON.stringify({
     //     title: store.state.searchText,
     //     page
