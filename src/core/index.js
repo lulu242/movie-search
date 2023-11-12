@@ -34,7 +34,7 @@ function routeRender(routes) {
   history.replaceState(query, '') //(상태, 제목) 주소입력 안하면 현재 url유지
 
   // 2) 현재 라우트 정보를 찾아서 렌더링!
-  const currnetRoute = routes.find(route => new RegExp(`${route.path}`).test(hash))
+  const currnetRoute = routes.find(route => new RegExp(`${route.path}/?$`).test(hash))
   routerView.innerHTML = ''
   routerView.append(new currnetRoute.component().el)
   
