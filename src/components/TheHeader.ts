@@ -1,6 +1,15 @@
 import { Component } from "../core";
 
+interface State {
+  [key: string]: unknown
+  menus: {
+    name: string
+    href: string
+  }[]
+}
+
 export default class TheHeader extends Component {
+  public state!: State // state가 super로 만들어져서 class에 초기화를 따로 하지 않음 !을 사용해 후에 타입을 지정해줌
   constructor() {
     super({
       tagName: 'header',

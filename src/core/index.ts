@@ -1,6 +1,14 @@
 // Component
+interface ComponentPayload {
+  tagName?: string
+  props?: { [key: string]: unknown }
+  state?: { [key: string]: unknown }
+}
 export class Component {
-  constructor(payload = {}) {
+  public el
+  public props
+  public state
+  constructor(payload:ComponentPayload = {}) {
     // 컴포넌트 생성시 최상위 요소 태그, props와 state 생성
     const { tagName = 'div', props = {}, state = {} } = payload;
     this.el = document.createElement(tagName); // 컴포넌트의 최상위 요소
@@ -13,7 +21,13 @@ export class Component {
 
 // Router
 // 페이지 렌더링
-function routeRender(routes) {
+interface Route {
+  path: string
+  component: typeof Component
+}
+type Routes = Route[]
+
+function routeRender(routes: Routes) {
   // 해시 없을 경우 현재 url를 /#/으로 대체한다
   if (!location.hash) {
     history.replaceState(null, '', '/#/'); // (상태, 제목, 주소)
@@ -24,24 +38,29 @@ function routeRender(routes) {
   // 물음표를 기준으로 해시 정보와 쿼리스트링을 구분(쿼리스트링 없을 때를 고려해 기본값 주기)
   
   // 1) 쿼리스트링을 각각 key와 value 나누어 객체로 히스토리의 상태에 저장!
+  interface Query {
+    [key: string]: string
+  }
   const query = querystring
     .split('&')
     .reduce((acc, cur) => {
       const [key, value] = cur.split('=');
       acc[key] = value;
       return acc;
-    }, {});
+    }, {} as Query); // 매개변수에 직접 타입 지정 시 첫 값 {}으로 지정 안됨
   history.replaceState(query, '') //(상태, 제목) 주소입력 안하면 현재 url유지
 
   // 2) 현재 라우트 정보를 찾아서 렌더링!
   const currnetRoute = routes.find(route => new RegExp(`${route.path}/?$`).test(hash))
-  routerView.innerHTML = ''
-  routerView.append(new currnetRoute.component().el)
+  if(routerView) {
+    routerView.innerHTML = ''
+    currnetRoute && routerView.append(new currnetRoute.component().el)
+  }
   
   // 3) 화면 출력 후 스크롤 위치 복구!
   window.scrollTo(0,0)
 }
-export function createRouter(routes) {
+export function createRouter(routes: Routes) {
   // 원하는(필요한) 곳에서 호출할 수 있도록 함수 데이터를 반환!
   return function () {
     window.addEventListener('popstate', () => { //히스토리가 변할 때마다 렌더링
@@ -52,10 +71,16 @@ export function createRouter(routes) {
 }
 
 // Store
-export class Store {
-  constructor(state) {
-    this.state = {}
-    this.observers = {}
+interface StoreObservers {
+  [key: string]: subscribeCallback[]
+}
+interface subscribeCallback {
+  (arg: unknown): void
+}
+export class Store<S> {
+  public state = {} as S // 초기화에서 {}이지만 할당 시 S타입으로
+  private observers = {} as StoreObservers // 초기화에서 {}이지만 할당 시 StoreObservers타입으로
+  constructor(state: S) {
     for(const key in state) {
       // 각 상태에 대한 변경 감시(Setter) 설정
       Object.defineProperty(this.state, key, {
@@ -70,7 +95,7 @@ export class Store {
     }
   }
   //상태 변경 구독
-  subscribe(key, cb) {
+  subscribe(key: string, cb: subscribeCallback) {
     Array.isArray(this.observers[key]) 
     ? this.observers[key].push(cb) 
     : this.observers[key] = [cb]
